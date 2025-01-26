@@ -12,6 +12,7 @@ dotenv.config();
 const URL = "https://secret-project-emgr.onrender.com";
 
 cron.schedule("*/12 * * * *", () => {
+  console.log("Started 1st job");
   https
     .get(URL, (res) => {
       if (res.statusCode === 200) {
