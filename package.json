@@ -8,7 +8,8 @@
     "build": "tsc && vite build",
     "lint": "eslint . --ext ts,tsx --report-unused-disable-directives --max-warnings 0",
     "preview": "vite preview",
-    "server": "node server/index.js"
+    "server": "node server/index.js",
+    "deploy": "npm install && npm run build"
   },
   "dependencies": {
     "@gsap/react": "^2.1.0",
@@ -22,8 +23,10 @@
     "lucide-react": "^0.344.0",
     "node-cron": "^3.0.3",
     "nodemailer": "^6.9.11",
+    "path": "^0.12.7",
     "react": "^18.2.0",
-    "react-dom": "^18.2.0"
+    "react-dom": "^18.2.0",
+    "url": "^0.11.4"
   },
   "devDependencies": {
     "@types/canvas-confetti": "^1.6.4",
@@ -42,6 +45,7 @@
     "eslint": "^8.56.0",
     "eslint-plugin-react-hooks": "^4.6.0",
     "eslint-plugin-react-refresh": "^0.4.5",
+    "nodemon": "^3.1.9",
     "postcss": "^8.4.35",
     "tailwindcss": "^3.4.1",
     "typescript": "^5.2.2",
