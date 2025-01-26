@@ -1,4 +1,5 @@
 // index.js
+import https from "https";
 import express from "express";
 import cors from "cors";
 import cron from "node-cron";
@@ -7,6 +8,22 @@ import dotenv from "dotenv";
 import { differenceInDays, format } from "date-fns";
 // Load environment variables
 dotenv.config();
+
+const URL = "https://secret-project-emgr.onrender.com";
+
+cron.schedule("*/12 * * * *", () => {
+  https
+    .get(URL, (res) => {
+      if (res.statusCode === 200) {
+        console.log("GET request sent successfully");
+      } else {
+        console.log("GET request failed", res.statusCode);
+      }
+    })
+    .on("error", (e) => {
+      console.error("Error while sending request", e);
+    });
+});
 
 export const quotes = [
   // Funny Friendship Quotes
@@ -293,23 +310,23 @@ app.use(cors());
 app.use(express.json());
 
 const BIRTHDAY_DATE = new Date("2025-03-28"); //03-28
-// 11:50 PM on March 27th - Wake the server
-cron.schedule("50 23 27 3 *", async () => {
-  const message =
-    "Server started and preparing for birthday email at 11:50 PM.";
-  await sendServerNotification(message);
-  console.log("11:50 PM - Preparing server for birthday email...");
-  // Add any specific logic to ensure the server is ready, like warming up services
-});
+// // 11:50 PM on March 27th - Wake the server
+// cron.schedule("50 23 27 3 *", async () => {
+//   const message =
+//     "Server started and preparing for birthday email at 11:50 PM.";
+//   await sendServerNotification(message);
+//   console.log("11:50 PM - Preparing server for birthday email...");
+//   // Add any specific logic to ensure the server is ready, like warming up services
+// });
 
-// 11:55 PM on March 27th - Final preparation before sending email
-cron.schedule("55 23 27 3 *", async () => {
-  const message =
-    "Final preparations completed before birthday email at 11:55 PM.";
-  await sendServerNotification(message);
-  console.log("11:55 PM - Final preparations before birthday email...");
-  // Final checks or actions before the 12 AM email is sent
-});
+// // 11:55 PM on March 27th - Final preparation before sending email
+// cron.schedule("55 23 27 3 *", async () => {
+//   const message =
+//     "Final preparations completed before birthday email at 11:55 PM.";
+//   await sendServerNotification(message);
+//   console.log("11:55 PM - Final preparations before birthday email...");
+//   // Final checks or actions before the 12 AM email is sent
+// });
 
 // Schedule birthday email at 12 AM //28 3
 cron.schedule("0 0 28 3 *", async () => {
@@ -321,23 +338,23 @@ cron.schedule("0 0 28 3 *", async () => {
   }
 });
 
-// Trigger at 8:50 AM
-cron.schedule("50 8 * * *", async () => {
-  const message =
-    "Server started and preparing for birthday email at 08:50 AM.";
-  await sendServerNotification(message);
-  console.log("8:50 AM task triggered");
-  // Any preparation you need before 9 AM
-});
+// // Trigger at 8:50 AM
+// cron.schedule("50 8 * * *", async () => {
+//   const message =
+//     "Server started and preparing for birthday email at 08:50 AM.";
+//   await sendServerNotification(message);
+//   console.log("8:50 AM task triggered");
+//   // Any preparation you need before 9 AM
+// });
 
-// Trigger at 8:55 AM
-cron.schedule("55 8 * * *", async () => {
-  const message =
-    "Final preparations completed before birthday email at 08:55 AM.";
-  await sendServerNotification(message);
-  console.log("8:55 AM task triggered");
-  // Any last-minute preparation before the 9 AM email
-});
+// // Trigger at 8:55 AM
+// cron.schedule("55 8 * * *", async () => {
+//   const message =
+//     "Final preparations completed before birthday email at 08:55 AM.";
+//   await sendServerNotification(message);
+//   console.log("8:55 AM task triggered");
+//   // Any last-minute preparation before the 9 AM email
+// });
 
 // Schedule countdown emails at 9 AM
 cron.schedule("0 9 * * *", async () => {
