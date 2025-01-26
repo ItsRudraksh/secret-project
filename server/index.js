@@ -241,7 +241,7 @@ const sendDailyEmail = async (daysLeft, isBirthday = false) => {
   const mailOptions = isBirthday
     ? {
         from: process.env.EMAIL_USER,
-        to: "rudrakshkapoor2004@gmail.com",
+        to: "rudrakshkapoor2004@gmail.com, rudrakshisharma86@gmail.com",
         subject: `🎉 Happy Birthday Rudrry! 🎂`,
         html: getBirthdayEmail(),
       }
@@ -258,7 +258,7 @@ const sendDailyEmail = async (daysLeft, isBirthday = false) => {
           <p style="text-align: right; color: #6b7280;">- ${randomQuote.author}</p>
         </div>
         <p style="text-align: center;">Can't wait to celebrate with you! 🎉</p>
-        <a style="text-align: center;" href="">Explore more</a>
+        <a style="text-align: center;" href="https://bestieekabdayy.netlify.app/">Explore more</a>
       </div>
     `,
       };
@@ -292,9 +292,9 @@ const sendServerNotification = async (message) => {
 app.use(cors());
 app.use(express.json());
 
-const BIRTHDAY_DATE = new Date("2025-01-27"); //03-28
+const BIRTHDAY_DATE = new Date("2025-03-28"); //03-28
 // 11:50 PM on March 27th - Wake the server
-cron.schedule("50 23 26 1 *", async () => {
+cron.schedule("50 23 27 3 *", async () => {
   const message =
     "Server started and preparing for birthday email at 11:50 PM.";
   await sendServerNotification(message);
@@ -303,7 +303,7 @@ cron.schedule("50 23 26 1 *", async () => {
 });
 
 // 11:55 PM on March 27th - Final preparation before sending email
-cron.schedule("55 23 26 1 *", async () => {
+cron.schedule("55 23 27 3 *", async () => {
   const message =
     "Final preparations completed before birthday email at 11:55 PM.";
   await sendServerNotification(message);
@@ -312,7 +312,7 @@ cron.schedule("55 23 26 1 *", async () => {
 });
 
 // Schedule birthday email at 12 AM //28 3
-cron.schedule("0 0 27 1 *", async () => {
+cron.schedule("0 0 28 3 *", async () => {
   try {
     await sendDailyEmail(0, true);
     console.log("Birthday email sent successfully at 12:00 AM!");
