@@ -473,16 +473,10 @@ cron.schedule(
   "*/13 * * * *",
   () => {
     console.log("Hitting server");
-    let counter = 0;
     https
       .get(URL, (res) => {
         if (res.statusCode === 200) {
-          console.log("GET request sent successfully");
           console.log("Server is being hit and kept running");
-          if (counter < 3) {
-            sendServerNotification("Server running !!!");
-            counter++;
-          }
         } else {
           console.log("GET request failed", res.statusCode);
           sendServerNotification("Server failed");
@@ -495,6 +489,18 @@ cron.schedule(
   {
     scheduled: true,
     timezone: "Asia/Kolkata", // Specify IST as the timezone for this cron job
+  }
+);
+
+cron.schedule(
+  "0 * * * *", // Runs at the start of every hour
+  () => {
+    console.log("Sending feedback mail");
+    sendServerNotification("Server is being hit and kept running");
+  },
+  {
+    scheduled: true,
+    timezone: "Asia/Kolkata", // IST timezone
   }
 );
 
