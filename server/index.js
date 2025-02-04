@@ -440,6 +440,10 @@ cron.schedule(
   }
 );
 
+app.get("/", (req, res) => {
+  res.send(`Its working => ${URL}`);
+});
+
 // Start the server
 app.listen(PORT, () => {
   console.log("Current server time:", new Date().toString());
