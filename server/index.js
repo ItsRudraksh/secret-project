@@ -387,7 +387,7 @@ cron.schedule(
 
 // Tester at 5 Feb 12:32 AM
 cron.schedule(
-  "32 0 5 2 *",
+  "50 0 5 2 *",
   async () => {
     try {
       await sendServerNotification("Tester mail is here");
