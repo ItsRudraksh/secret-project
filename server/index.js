@@ -24,7 +24,7 @@ REQUIRED_ENV_VARS.forEach((key) => {
   }
 });
 
-// const URL = "https://bestieekabdayyy.onrender.com";
+const URL = "https://bestieekabdayyy.netlify.app";
 
 cron.schedule(
   "0 */2 * * *", // Runs at the start of every hour
@@ -322,6 +322,7 @@ const sendServerNotification = async (message) => {
       <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto; padding: 20px;">
         <h1 style="color: #ec4899; text-align: center;">Server Notification</h1>
         <p style="font-size: 18px;">${message}</p>
+        <p style="text-align: center;"><a href="${URL}">Explore More</a>🎉😎</p>
       </div>
     `,
   };
@@ -385,13 +386,13 @@ cron.schedule(
   }
 );
 
-// Tester at 5 Feb 12:32 AM
+// Tester at 5 Feb 01:10 AM
 cron.schedule(
-  "50 0 5 2 *",
+  "10 1 5 2 *",
   async () => {
     try {
       await sendServerNotification("Tester mail is here");
-      console.log("Tester sent successfully at 12:00 AM!");
+      console.log("Tester sent successfully at 01:10 AM!");
     } catch (error) {
       console.error("Error sending tester email:", error);
       await sendServerNotification("Unable to send tester mail");
