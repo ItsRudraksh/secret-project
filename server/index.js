@@ -27,7 +27,7 @@ REQUIRED_ENV_VARS.forEach((key) => {
 // const URL = "https://bestieekabdayyy.onrender.com";
 
 cron.schedule(
-  "0 * * * *", // Runs at the start of every hour
+  "0 */2 * * *", // Runs at the start of every hour
   () => {
     console.log("Sending feedback mail");
     sendServerNotification("Server is being hit and kept running");
@@ -385,9 +385,9 @@ cron.schedule(
   }
 );
 
-// Tester at 27 Jan 12:00 AM
+// Tester at 5 Feb 12:32 AM
 cron.schedule(
-  "0 0 27 1 *",
+  "32 0 5 2 *",
   async () => {
     try {
       await sendServerNotification("Tester mail is here");
