@@ -1,15 +1,15 @@
-import React, { useEffect, useRef } from 'react';
+import React, { useEffect, useRef, memo } from 'react';
 import { Heart, Sparkles, Star } from 'lucide-react';
 import gsap from 'gsap';
 
-export const FloatingElements: React.FC = () => {
+export const FloatingElements: React.FC = memo(() => {
   const containerRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
     if (!containerRef.current) return;
 
     const elements = containerRef.current.children;
-    
+
     Array.from(elements).forEach((element) => {
       gsap.to(element, {
         y: 'random(-20, 20)',
@@ -60,4 +60,4 @@ export const FloatingElements: React.FC = () => {
       ))}
     </div>
   );
-};
+});

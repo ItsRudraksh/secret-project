@@ -1,14 +1,14 @@
-import React from 'react';
-import { differenceInDays, differenceInHours, differenceInMinutes, differenceInSeconds } from 'date-fns';
+import React, { memo } from 'react';
 import { useGSAP } from '@gsap/react';
 import gsap from 'gsap';
+import { calculateDuration } from '../utils/timeUtils';
 import { Gift, Heart, Clock, Star } from 'lucide-react';
 
 interface CountdownProps {
   targetDate: Date;
 }
 
-export const Countdown: React.FC<CountdownProps> = ({ targetDate }) => {
+export const Countdown: React.FC<CountdownProps> = memo(({ targetDate }) => {
   const [timeLeft, setTimeLeft] = React.useState({
     days: 0,
     hours: 0,
@@ -30,14 +30,8 @@ export const Countdown: React.FC<CountdownProps> = ({ targetDate }) => {
 
   React.useEffect(() => {
     const timer = setInterval(() => {
-      const now = new Date();
-      
-      setTimeLeft({
-        days: differenceInDays(targetDate, now),
-        hours: differenceInHours(targetDate, now) % 24,
-        minutes: differenceInMinutes(targetDate, now) % 60,
-        seconds: differenceInSeconds(targetDate, now) % 60
-      });
+      // Use our utility function to calculate the time difference
+      setTimeLeft(calculateDuration(targetDate));
     }, 1000);
 
     return () => clearInterval(timer);
@@ -67,4 +61,4 @@ export const Countdown: React.FC<CountdownProps> = ({ targetDate }) => {
       </div>
     </div>
   );
-};
+});

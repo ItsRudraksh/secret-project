@@ -1,7 +1,7 @@
-import React, { useEffect, useCallback } from 'react';
+import React, { useEffect, useCallback, memo } from 'react';
 import confetti from 'canvas-confetti';
 import { Howl } from 'howler';
-import { differenceInDays } from 'date-fns';
+import { isToday } from '../utils/timeUtils';
 
 const birthdaySound = new Howl({
   src: ['https://assets.mixkit.co/active_storage/sfx/2869/2869-preview.mp3'],
@@ -12,7 +12,7 @@ interface BirthdayEffectsProps {
   targetDate: Date;
 }
 
-export const BirthdayEffects: React.FC<BirthdayEffectsProps> = ({ targetDate }) => {
+export const BirthdayEffects: React.FC<BirthdayEffectsProps> = memo(({ targetDate }) => {
   const shootConfetti = useCallback(() => {
     const duration = 15 * 1000;
     const animationEnd = Date.now() + duration;
@@ -22,7 +22,7 @@ export const BirthdayEffects: React.FC<BirthdayEffectsProps> = ({ targetDate }) 
       return Math.random() * (max - min) + min;
     }
 
-    const interval: any = setInterval(function() {
+    const interval: any = setInterval(function () {
       const timeLeft = animationEnd - Date.now();
 
       if (timeLeft <= 0) {
@@ -45,14 +45,12 @@ export const BirthdayEffects: React.FC<BirthdayEffectsProps> = ({ targetDate }) 
   }, []);
 
   useEffect(() => {
-    const today = new Date();
-    const daysLeft = differenceInDays(targetDate, today);
-
-    if (daysLeft === 0) {
+    // Check if today is the birthday using our utility
+    if (isToday(targetDate)) {
       shootConfetti();
       birthdaySound.play();
     }
   }, [targetDate, shootConfetti]);
 
   return null;
-};
+});

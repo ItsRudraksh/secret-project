@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { useGSAP } from "@gsap/react";
 import gsap from "gsap";
+import { initializeTimezone, getDateInIST } from "./utils/timeUtils";
 import { Countdown } from "./components/Countdown";
 import { DailyQuote } from "./components/DailyQuote";
 import { GiftWishlist } from "./components/GiftWishlist";
@@ -8,15 +9,22 @@ import { BirthdayEffects } from "./components/BirthdayEffects";
 import { FloatingElements } from "./components/FloatingElements";
 import { PhotoMemories } from "./components/PhotoMemories";
 import { SecretPage } from "./components/SecretPage";
+import { CurrentTime } from "./components/CurrentTime";
 import { Gift, Heart, Sparkles, Camera, Home, Lock } from "lucide-react";
 
 type PageType = 'home' | 'photos' | 'secret';
 
 export default function App() {
-  const birthdayDate = new Date("2025-03-28");
+  // Force Indian timezone by using our utility
+  const birthdayDate = getDateInIST("2025-03-28");
   const appRef = React.useRef(null);
   const [currentPage, setCurrentPage] = useState<PageType>('home');
   const [pageTransition, setPageTransition] = useState(false);
+
+  // Initialize timezone for the app
+  useEffect(() => {
+    initializeTimezone();
+  }, []);
 
   useGSAP(
     () => {
@@ -156,6 +164,7 @@ export default function App() {
 
         <footer className="text-center py-8 text-gray-600 relative z-10">
           <p>Made with ❤️ for ms bestiee</p>
+          <CurrentTime />
         </footer>
       </div>
     );
