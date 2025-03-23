@@ -246,6 +246,8 @@ export const quotes = [
   },
 ];
 
+let bdayImage = "https://bday-bucket-28.s3.us-east-1.amazonaws.com/bday.gif";
+
 // HTML for the birthday email
 const getBirthdayEmail = () => {
   return `
@@ -268,6 +270,9 @@ const getBirthdayEmail = () => {
       <p style="text-align: center; color: #4b5563; font-size: 16px;">
         Here's wishing you a day filled with love, laughter, cake (lots of it), and maybe even a surprise or two... 😉  
       </p>
+      <div style="text-align: center; margin: 15px 0;">
+        <img src="${bdayImage}" alt="Birthday countdown" style="max-width: 100%; border-radius: 10px; margin: 10px 0; max-height: 200px;">
+      </div>
       <div style="text-align: center; margin-top: 20px;">
         <p style="color: #be185d; font-size: 18px;">With all the charm I could muster,</p>
         <p style="color: #be185d; font-size: 18px;">Your Kapuuuuu ❤️</p>
@@ -276,21 +281,109 @@ const getBirthdayEmail = () => {
   `;
 };
 
+// HTML for special countdown emails (last 3 days)
+const getSpecialCountdownEmail = (daysLeft, randomQuote) => {
+  // Different themes for each of the last 3 days
+  const themes = {
+    3: {
+      gradient: "from-purple-300 to-pink-200",
+      bgColor: "#f3e8ff",
+      titleColor: "#9333ea",
+      message: "We're getting closer to your special day! Just three more sleeps until we celebrate the amazing person that you are. The countdown is getting exciting, and I hope you're feeling the anticipation too! 💜✨",
+      emoji: "✨ 3️⃣ ✨",
+      image: "https://bday-bucket-28.s3.us-east-1.amazonaws.com/3.gif"
+    },
+    2: {
+      gradient: "from-blue-300 to-indigo-200",
+      bgColor: "#e0f2fe",
+      titleColor: "#3b82f6",
+      message: "Just TWO DAYS to go until your birthday! I'm already planning how to make your day extra special. You deserve all the love and happiness in the world, my gorgeous bestie! 💙🌟",
+      emoji: "✨ 2️⃣ ✨",
+      image: "https://bday-bucket-28.s3.us-east-1.amazonaws.com/2.gif"
+    },
+    1: {
+      gradient: "from-pink-300 to-rose-200",
+      bgColor: "#fce7f3",
+      titleColor: "#ec4899",
+      message: "ONE. MORE. DAY! Tomorrow is finally YOUR day! I can hardly contain my excitement to celebrate you. Get ready for the most amazing birthday celebration ever because you're absolutely worth it! 💕🎀",
+      emoji: "✨ 1️⃣ ✨",
+      image: "https://bday-bucket-28.s3.us-east-1.amazonaws.com/1.gif"
+    }
+  };
+
+  const theme = themes[daysLeft];
+
+  return `
+    <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto; padding: 20px; background: linear-gradient(to bottom right, ${theme.bgColor}, white); border-radius: 15px; border: 2px solid #f472b6;">
+      <h1 style="color: ${theme.titleColor}; text-align: center; font-size: 28px;">
+        ${theme.emoji} ${daysLeft} ${daysLeft === 1 ? 'Day' : 'Days'} Until Your Birthday! ${theme.emoji}
+      </h1>
+      
+      <div style="text-align: center; margin: 15px 0;">
+        <img src="${theme.image}" alt="Birthday countdown" style="max-width: 100%; border-radius: 10px; margin: 10px 0; max-height: 200px;">
+      </div>
+      
+      <div style="text-align: center; margin: 20px 0;">
+        <p style="font-size: 18px; color: #4b5563; line-height: 1.6;">
+          Hey Rudrry! 
+          <br><br>
+          ${theme.message}
+        </p>
+      </div>
+      
+      <div style="background-color: white; padding: 20px; border-radius: 10px; margin: 20px 0; box-shadow: 0 4px 6px rgba(0,0,0,0.1);">
+        <p style="font-style: italic; color: #4b5563; font-size: 16px;">
+          "${randomQuote.text}"
+        </p>
+        <p style="text-align: right; color: #6b7280;">- ${randomQuote.author}</p>
+      </div>
+      
+      <p style="text-align: center; color: #4b5563; font-size: 16px; margin-top: 20px;">
+        Can't wait to celebrate the incredible person you are! 🎉
+      </p>
+      
+      <div style="text-align: center; margin-top: 20px;">
+        <a href="${URL}" style="display: inline-block; padding: 10px 20px; background-color: ${theme.titleColor}; color: white; text-decoration: none; border-radius: 5px; font-weight: bold;">
+          Check Your Birthday Countdown!
+        </a>
+      </div>
+      
+      <div style="text-align: center; margin-top: 25px;">
+        <p style="color: #be185d; font-size: 18px;">With love and excitement,</p>
+        <p style="color: #be185d; font-size: 18px; font-weight: bold;">Your Kapuuuuu ❤️</p>
+      </div>
+    </div>
+  `;
+};
+
 // Function to send daily or birthday emails
 const sendDailyEmail = async (daysLeft, isBirthday = false) => {
   const randomQuote = quotes[Math.floor(Math.random() * quotes.length)];
-  const mailOptions = isBirthday
-    ? {
-        from: process.env.EMAIL_USER,
-        to: "rudrakshkapoor2004@gmail.com, rudrakshisharma86@gmail.com",
-        subject: `🎉 Happy Birthday Rudrry! 🎂`,
-        html: getBirthdayEmail(),
-      }
-    : {
-        from: process.env.EMAIL_USER,
-        to: "rudrakshkapoor2004@gmail.com, rudrakshisharma86@gmail.com",
-        subject: `${daysLeft} Days Until Your Birthday! 🎉`,
-        html: `
+  
+  // Determine what type of email to send
+  let emailHtml;
+  let emailSubject;
+  
+  if (isBirthday) {
+    emailHtml = getBirthdayEmail();
+    emailSubject = `🎉 Happy Birthday Rudrry! 🎂`;
+  } else if (daysLeft <= 3) {
+    // Use special template for last 3 days
+    emailHtml = getSpecialCountdownEmail(daysLeft, randomQuote);
+    
+    // Special subjects for the last 3 days
+    if (daysLeft === 3) {
+      emailSubject = `✨ Just 3 Days to Go! Your Birthday Countdown is Getting Exciting! ✨`;
+    } else if (daysLeft === 2) {
+      emailSubject = `💖 2 Days Left! The Excitement is Building! 💖`;
+    } else if (daysLeft === 1) {
+      emailSubject = `🎀 TOMORROW IS YOUR BIRTHDAY! Just 1 More Day! 🎀`;
+    } else {
+      emailSubject = `${daysLeft} Days Until Your Birthday! 🎉`;
+    }
+  } else {
+    // Regular countdown email for days > 3
+    emailHtml = `
       <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto; padding: 20px;">
         <h1 style="color: #ec4899; text-align: center;">Birthday Countdown! 🎂</h1>
         <p style="font-size: 18px; text-align: center;">Hey Rudrry! Just ${daysLeft} days until your special day!</p>
@@ -301,8 +394,16 @@ const sendDailyEmail = async (daysLeft, isBirthday = false) => {
         <p style="text-align: center;">Can't wait to celebrate with you! 🎉</p>
         <p style="text-align: center;"><a href="${URL}">Explore More</a>🎉😎</p>
       </div>
-    `,
-      };
+    `;
+    emailSubject = `${daysLeft} Days Until Your Birthday! 🎉`;
+  }
+
+  const mailOptions = {
+    from: process.env.EMAIL_USER,
+    to: "rudrakshkapoor2004@gmail.com, rudrakshisharma86@gmail.com",
+    subject: emailSubject,
+    html: emailHtml
+  };
 
   try {
     await transporter.sendMail(mailOptions);
@@ -340,7 +441,7 @@ const BIRTHDAY_DATE = new Date("2025-03-28");
 
 // Alert at 5:50 PM IST
 cron.schedule(
-  "50 17 * * *",
+  "50 5 * * *",
   async () => {
     const today = new Date();
     const daysLeft = differenceInDays(BIRTHDAY_DATE, today);
@@ -364,7 +465,7 @@ cron.schedule(
 
 // Countdown emails at 5:55 PM IST
 cron.schedule(
-  "55 17 * * *",
+  "55 5 * * *",
   async () => {
     const today = new Date();
     const daysLeft = differenceInDays(BIRTHDAY_DATE, today);
@@ -406,14 +507,14 @@ cron.schedule(
 
 // Alert at 11:55 PM
 cron.schedule(
-  "55 23 28 3 *",
+  "55 23 27 3 *",
   async () => {
     try {
-      await sendServerNotification("Going to send bday prep mail");
-      console.log("Birthday prep email sent successfully at 11:55 PM!");
+      await sendServerNotification("Going to send final bday mail");
+      console.log("Final bday mail sent successfully at 11:55 PM!");
     } catch (error) {
-      console.error("Error sending birthday prep email:", error);
-      await sendServerNotification("Unable to reach bday prep mail");
+      console.error("Error sending final bday mail:", error);
+      await sendServerNotification("Unable to reach final bday mail");
     }
   },
   {
@@ -449,4 +550,112 @@ app.listen(PORT, () => {
   console.log("Current server time:", new Date().toString());
   console.log("Current time in IST:", moment().tz("Asia/Kolkata").format());
   console.log(`Server is running on port ${PORT}`);
+});
+
+// Function to test special countdown emails
+const sendTestEmail = async (daysLeft) => {
+  const randomQuote = quotes[Math.floor(Math.random() * quotes.length)];
+  
+  // Determine what type of email to send
+  let emailHtml;
+  let emailSubject;
+  
+  if (daysLeft === 0) {
+    emailHtml = getBirthdayEmail();
+    emailSubject = `🎉 [TEST] Happy Birthday Rudrry! 🎂`;
+  } else if (daysLeft <= 3) {
+    // Use special template for last 3 days
+    emailHtml = getSpecialCountdownEmail(daysLeft, randomQuote);
+    
+    // Special subjects for the last 3 days
+    if (daysLeft === 3) {
+      emailSubject = `✨ [TEST] Just 3 Days to Go! Your Birthday Countdown is Getting Exciting! ✨`;
+    } else if (daysLeft === 2) {
+      emailSubject = `💖 [TEST] 2 Days Left! The Excitement is Building! 💖`;
+    } else if (daysLeft === 1) {
+      emailSubject = `🎀 [TEST] TOMORROW IS YOUR BIRTHDAY! Just 1 More Day! 🎀`;
+    } else {
+      emailSubject = `[TEST] ${daysLeft} Days Until Your Birthday! 🎉`;
+    }
+  } else {
+    // Regular countdown email for days > 3
+    emailHtml = `
+      <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto; padding: 20px;">
+        <h1 style="color: #ec4899; text-align: center;">Birthday Countdown! 🎂</h1>
+        <p style="font-size: 18px; text-align: center;">Hey Rudrry! Just ${daysLeft} days until your special day!</p>
+        <div style="background-color: #fce7f3; padding: 20px; border-radius: 10px; margin: 20px 0;">
+          <p style="font-style: italic; color: #4b5563;">"${randomQuote.text}"</p>
+          <p style="text-align: right; color: #6b7280;">- ${randomQuote.author}</p>
+        </div>
+        <p style="text-align: center;">Can't wait to celebrate with you! 🎉</p>
+        <p style="text-align: center;"><a href="${URL}">Explore More</a>🎉😎</p>
+      </div>
+    `;
+    emailSubject = `[TEST] ${daysLeft} Days Until Your Birthday! 🎉`;
+  }
+
+  const mailOptions = {
+    from: process.env.EMAIL_USER,
+    to: "agent1408007@gmail.com", // Test recipient
+    subject: emailSubject,
+    html: emailHtml
+  };
+
+  try {
+    await transporter.sendMail(mailOptions);
+    console.log(`Test email for day ${daysLeft} sent successfully!`);
+    return { success: true, message: `Test email for day ${daysLeft} sent successfully!` };
+  } catch (error) {
+    console.error(`Error sending test email for day ${daysLeft}:`, error);
+    return { success: false, message: error.message };
+  }
+};
+
+// API endpoint to test emails
+app.get("/test-email/:days", async (req, res) => {
+  // Verify API key for security
+  const apiKey = req.query.key;
+  if (apiKey !== process.env.API_KEY) {
+    return res.status(401).json({ error: "Unauthorized. Invalid API key." });
+  }
+
+  const daysLeft = parseInt(req.params.days);
+  
+  // Validate daysLeft
+  if (isNaN(daysLeft) || daysLeft < 0) {
+    return res.status(400).json({ error: "Days must be a non-negative number." });
+  }
+  
+  try {
+    const result = await sendTestEmail(daysLeft);
+    res.json(result);
+  } catch (error) {
+    res.status(500).json({ error: error.message });
+  }
+});
+
+// Helper endpoint to test all special emails at once
+app.get("/test-all-special", async (req, res) => {
+  // Verify API key for security
+  const apiKey = req.query.key;
+  if (apiKey !== process.env.API_KEY) {
+    return res.status(401).json({ error: "Unauthorized. Invalid API key." });
+  }
+  
+  try {
+    const results = [];
+    
+    // Test days 3, 2, 1, and 0 (birthday)
+    for (let days = 3; days >= 0; days--) {
+      const result = await sendTestEmail(days);
+      results.push({ days, ...result });
+      
+      // Add a small delay between emails
+      await new Promise(resolve => setTimeout(resolve, 2000));
+    }
+    
+    res.json({ success: true, results });
+  } catch (error) {
+    res.status(500).json({ error: error.message });
+  }
 });
