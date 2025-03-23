@@ -246,7 +246,7 @@ export const quotes = [
   },
 ];
 
-let bdayImage = "https://bday-bucket-28.s3.us-east-1.amazonaws.com/bday.gif";
+let bdayImage = "https://rk-whiteboard-bucket.s3.ap-south-1.amazonaws.com/bday-gifs/bday.gif";
 
 // HTML for the birthday email
 const getBirthdayEmail = () => {
@@ -291,7 +291,7 @@ const getSpecialCountdownEmail = (daysLeft, randomQuote) => {
       titleColor: "#9333ea",
       message: "We're getting closer to your special day! Just three more sleeps until we celebrate the amazing person that you are. The countdown is getting exciting, and I hope you're feeling the anticipation too! 💜✨",
       emoji: "✨ 3️⃣ ✨",
-      image: "https://bday-bucket-28.s3.us-east-1.amazonaws.com/3.gif"
+      image: "https://rk-whiteboard-bucket.s3.ap-south-1.amazonaws.com/bday-gifs/three.gif"
     },
     2: {
       gradient: "from-blue-300 to-indigo-200",
@@ -299,7 +299,7 @@ const getSpecialCountdownEmail = (daysLeft, randomQuote) => {
       titleColor: "#3b82f6",
       message: "Just TWO DAYS to go until your birthday! I'm already planning how to make your day extra special. You deserve all the love and happiness in the world, my gorgeous bestie! 💙🌟",
       emoji: "✨ 2️⃣ ✨",
-      image: "https://bday-bucket-28.s3.us-east-1.amazonaws.com/2.gif"
+      image: "https://rk-whiteboard-bucket.s3.ap-south-1.amazonaws.com/bday-gifs/two.gif"
     },
     1: {
       gradient: "from-pink-300 to-rose-200",
@@ -307,7 +307,15 @@ const getSpecialCountdownEmail = (daysLeft, randomQuote) => {
       titleColor: "#ec4899",
       message: "ONE. MORE. DAY! Tomorrow is finally YOUR day! I can hardly contain my excitement to celebrate you. Get ready for the most amazing birthday celebration ever because you're absolutely worth it! 💕🎀",
       emoji: "✨ 1️⃣ ✨",
-      image: "https://bday-bucket-28.s3.us-east-1.amazonaws.com/1.gif"
+        image: "https://rk-whiteboard-bucket.s3.ap-south-1.amazonaws.com/bday-gifs/one.gif"
+    },
+    0: {
+      gradient: "from-rose-400 to-red-300",
+      bgColor: "#ffe4e6",
+      titleColor: "#e11d48",
+      message: "It's happening! Just HOURS away from your birthday! By this time tomorrow, you'll be celebrating your special day. I'm counting every minute until we can officially celebrate you! 💖✨",
+      emoji: "⏰ ✨ ⏰",
+      image: "https://rk-whiteboard-bucket.s3.ap-south-1.amazonaws.com/bday-gifs/zero.gif"
     }
   };
 
@@ -316,7 +324,7 @@ const getSpecialCountdownEmail = (daysLeft, randomQuote) => {
   return `
     <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto; padding: 20px; background: linear-gradient(to bottom right, ${theme.bgColor}, white); border-radius: 15px; border: 2px solid #f472b6;">
       <h1 style="color: ${theme.titleColor}; text-align: center; font-size: 28px;">
-        ${theme.emoji} ${daysLeft} ${daysLeft === 1 ? 'Day' : 'Days'} Until Your Birthday! ${theme.emoji}
+        ${theme.emoji} ${daysLeft === 0 ? 'Hours' : daysLeft === 1 ? 'Day' : 'Days'} Until Your Birthday! ${theme.emoji}
       </h1>
       
       <div style="text-align: center; margin: 15px 0;">
@@ -357,7 +365,7 @@ const getSpecialCountdownEmail = (daysLeft, randomQuote) => {
 };
 
 // Function to send daily or birthday emails
-const sendDailyEmail = async (daysLeft, isBirthday = false) => {
+const sendDailyEmail = async (daysLeft, isBirthday = false, customSubject = null) => {
   const randomQuote = quotes[Math.floor(Math.random() * quotes.length)];
   
   // Determine what type of email to send
@@ -377,7 +385,9 @@ const sendDailyEmail = async (daysLeft, isBirthday = false) => {
     } else if (daysLeft === 2) {
       emailSubject = `💖 2 Days Left! The Excitement is Building! 💖`;
     } else if (daysLeft === 1) {
-      emailSubject = `🎀 TOMORROW IS YOUR BIRTHDAY! Just 1 More Day! 🎀`;
+      emailSubject = `🎀 Just 1 More Day! The Countdown is Almost Over! 🎀`;
+    } else if (daysLeft === 0) {
+      emailSubject = `✨ Counting Hours to Your Birthday! ✨`;
     } else {
       emailSubject = `${daysLeft} Days Until Your Birthday! 🎉`;
     }
@@ -396,6 +406,11 @@ const sendDailyEmail = async (daysLeft, isBirthday = false) => {
       </div>
     `;
     emailSubject = `${daysLeft} Days Until Your Birthday! 🎉`;
+  }
+
+  // Override with custom subject if provided
+  if (customSubject) {
+    emailSubject = customSubject;
   }
 
   const mailOptions = {
@@ -489,11 +504,11 @@ cron.schedule(
 
 // Tester at 5 Feb 01:10 AM
 cron.schedule(
-  "10 1 5 2 *",
+  "17 4 24 3 *",
   async () => {
     try {
-      await sendServerNotification("Tester mail is here");
-      console.log("Tester sent successfully at 01:10 AM!");
+      await sendServerNotification("Tester mail is here for new updates");
+      console.log("Tester sent successfully at 04:17 AM!");
     } catch (error) {
       console.error("Error sending tester email:", error);
       await sendServerNotification("Unable to send tester mail");
@@ -552,8 +567,81 @@ app.listen(PORT, () => {
   console.log(`Server is running on port ${PORT}`);
 });
 
+// Manual scheduled emails for Rudrry's birthday in March 2024
+// 3 days countdown - March 24th, 2024 at 17:55 IST
+cron.schedule(
+  "55 5 24 3 *",
+  async () => {
+    try {
+      await sendDailyEmail(3);
+      console.log("3-day special countdown email sent successfully!");
+    } catch (error) {
+      console.error("Error sending 3-day special countdown email:", error);
+      await sendServerNotification("Unable to send 3-day special countdown email");
+    }
+  },
+  {
+    scheduled: true,
+    timezone: "Asia/Kolkata",
+  }
+);
+
+// 2 days countdown - March 25th, 2024 at 17:55 IST
+cron.schedule(
+  "55 5 25 3 *",
+  async () => {
+    try {
+      await sendDailyEmail(2);
+      console.log("2-day special countdown email sent successfully!");
+    } catch (error) {
+      console.error("Error sending 2-day special countdown email:", error);
+      await sendServerNotification("Unable to send 2-day special countdown email");
+    }
+  },
+  {
+    scheduled: true,
+    timezone: "Asia/Kolkata",
+  }
+);
+
+// 1 day countdown - March 26th, 2024 at 17:55 IST
+cron.schedule(
+  "55 5 26 3 *",
+  async () => {
+    try {
+      await sendDailyEmail(1);
+      console.log("1-day special countdown email sent successfully!");
+    } catch (error) {
+      console.error("Error sending 1-day special countdown email:", error);
+      await sendServerNotification("Unable to send 1-day special countdown email");
+    }
+  },
+  {
+    scheduled: true,
+    timezone: "Asia/Kolkata",
+  }
+);
+
+// 0 days countdown - March 27th, 2024 at 17:55 IST (day before birthday)
+cron.schedule(
+  "55 5 27 3 *",
+  async () => {
+    try {
+      await sendDailyEmail(0, false, "✨ Counting Hours to Your Birthday! ✨");
+      console.log("0-day special countdown email sent successfully!");
+    } catch (error) {
+      console.error("Error sending 0-day special countdown email:", error);
+      await sendServerNotification("Unable to send 0-day special countdown email");
+    }
+  },
+  {
+    scheduled: true,
+    timezone: "Asia/Kolkata",
+  }
+);
+
 // Function to test special countdown emails
-const sendTestEmail = async (daysLeft) => {
+const sendTestEmail = async (daysLeft, isBirthdayEmail = false) => {
   const randomQuote = quotes[Math.floor(Math.random() * quotes.length)];
   
   // Determine what type of email to send
@@ -561,8 +649,14 @@ const sendTestEmail = async (daysLeft) => {
   let emailSubject;
   
   if (daysLeft === 0) {
-    emailHtml = getBirthdayEmail();
-    emailSubject = `🎉 [TEST] Happy Birthday Rudrry! 🎂`;
+    if (isBirthdayEmail) {
+      emailHtml = getBirthdayEmail();
+      emailSubject = `🎉 [TEST] Happy Birthday Rudrry! 🎂`;
+    } else {
+      // 0-day countdown email (day before birthday)
+      emailHtml = getSpecialCountdownEmail(daysLeft, randomQuote);
+      emailSubject = `✨ [TEST] Counting Hours to Your Birthday! ✨`;
+    }
   } else if (daysLeft <= 3) {
     // Use special template for last 3 days
     emailHtml = getSpecialCountdownEmail(daysLeft, randomQuote);
@@ -573,7 +667,7 @@ const sendTestEmail = async (daysLeft) => {
     } else if (daysLeft === 2) {
       emailSubject = `💖 [TEST] 2 Days Left! The Excitement is Building! 💖`;
     } else if (daysLeft === 1) {
-      emailSubject = `🎀 [TEST] TOMORROW IS YOUR BIRTHDAY! Just 1 More Day! 🎀`;
+      emailSubject = `🎀 [TEST] Just 1 More Day! The Countdown is Almost Over! 🎀`;
     } else {
       emailSubject = `[TEST] ${daysLeft} Days Until Your Birthday! 🎉`;
     }
@@ -627,8 +721,25 @@ app.get("/test-email/:days", async (req, res) => {
   }
   
   try {
-    const result = await sendTestEmail(daysLeft);
+    const isBirthday = req.query.birthday === "true";
+    const result = await sendTestEmail(daysLeft, isBirthday);
     res.json(result);
+  } catch (error) {
+    res.status(500).json({ error: error.message });
+  }
+});
+
+// Specific endpoint to test the 0-day countdown email
+app.get("/test-countdown-zero", async (req, res) => {
+  // Verify API key for security
+  const apiKey = req.query.key;
+  if (apiKey !== process.env.API_KEY) {
+    return res.status(401).json({ error: "Unauthorized. Invalid API key." });
+  }
+  
+  try {
+    const result = await sendTestEmail(0, false);
+    res.json({ success: true, message: "Test 0-day countdown email sent successfully!", details: result });
   } catch (error) {
     res.status(500).json({ error: error.message });
   }
@@ -645,14 +756,25 @@ app.get("/test-all-special", async (req, res) => {
   try {
     const results = [];
     
-    // Test days 3, 2, 1, and 0 (birthday)
-    for (let days = 3; days >= 0; days--) {
+    // Test days 3, 2, 1
+    for (let days = 3; days >= 1; days--) {
       const result = await sendTestEmail(days);
       results.push({ days, ...result });
       
       // Add a small delay between emails
       await new Promise(resolve => setTimeout(resolve, 2000));
     }
+    
+    // Test 0-day countdown email (counting hours)
+    const zeroDayResult = await sendTestEmail(0, false);
+    results.push({ days: 0, type: "countdown", ...zeroDayResult });
+    
+    // Add a small delay between emails
+    await new Promise(resolve => setTimeout(resolve, 2000));
+    
+    // Test birthday email
+    const birthdayResult = await sendTestEmail(0, true);
+    results.push({ days: 0, type: "birthday", ...birthdayResult });
     
     res.json({ success: true, results });
   } catch (error) {
