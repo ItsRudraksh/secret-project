@@ -480,7 +480,7 @@ cron.schedule(
 
 // Countdown emails at 5:55 PM IST
 cron.schedule(
-  "55 5 * * *",
+  "0 0 * * *",
   async () => {
     const today = new Date();
     const daysLeft = differenceInDays(BIRTHDAY_DATE, today);
@@ -622,9 +622,9 @@ cron.schedule(
   }
 );
 
-// 0 days countdown - March 27th, 2024 at 17:55 IST (day before birthday)
+// 0 days countdown - March 27th, 2024 at 12 am IST (day before birthday)
 cron.schedule(
-  "55 5 27 3 *",
+  "0 0 27 3 *",
   async () => {
     try {
       await sendDailyEmail(0, false, "✨ Counting Hours to Your Birthday! ✨");
